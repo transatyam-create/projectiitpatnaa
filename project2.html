@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>ISEA Virtual Platform</title>
+  <style>
+    * { box-sizing: border-box; }
+    html, body { height: 100%; margin: 0; font-family: Arial, sans-serif; }
+    body {
+      display: flex; justify-content: center; align-items: center;
+      background: linear-gradient(to right, #3b82f6 60%, #ffffff 40%);
+      overflow: hidden;
+    }
+    .container { width: 100%; max-width: 1200px; height: 80vh; display:flex; gap:24px; padding:24px; }
+    .left-panel { flex:0.6; position:relative; color:#fff; padding:40px; display:flex; flex-direction:column; justify-content:center; }
+    .logo-container { position:absolute; top:24px; left:24px; }
+    .logo-img { height:120px; width:auto; display:block; }
+    .left-content { margin-top:40px; max-width:90%; }
+    .left-title { font-size:36px; margin:0 0 8px 0; font-weight:700; text-transform:uppercase; }
+    .left-subtitle { font-size:18px; margin:0 0 18px 0; font-weight:600; }
+    .left-description { font-size:15px; line-height:1.5; opacity:0.95; max-width:560px; }
+
+    .right-panel { flex:0.4; display:flex; align-items:center; justify-content:center; }
+    .form-container { width:100%; max-width:380px; background:#ffffff; border-radius:10px; padding:28px; box-shadow:0 6px 20px rgba(3,3,3,0.12); }
+    .form-title { color:#0f172a; text-align:center; font-size:22px; margin-bottom:18px; font-weight:700; }
+    .form-group { margin-bottom:14px; }
+    select, .btn { width:100%; padding:12px; border-radius:8px; font-size:14px; outline:none; }
+    select { border:1px solid #e6e6e6; background:#fff; -webkit-appearance:none; appearance:none; }
+    .btn { border:none; background:#3b82f6; color:white; cursor:pointer; font-weight:600; margin-top:8px; }
+    .secondary { background:white; color:#3b82f6; border:1px solid #3b82f6; }
+    .divider { text-align:center; margin:14px 0; color:#666; font-size:14px; }
+
+    @media (max-width:900px) {
+      .container { flex-direction:column-reverse; height:auto; padding:16px; }
+      .left-panel, .right-panel { width:100%; flex:unset; }
+      .logo-container { position:relative; top:0; left:0; text-align:center; margin-bottom:12px; }
+      .logo-img { margin:0 auto; height:100px; }
+      .left-content { margin-top:12px; text-align:center; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+
+    <!-- Left: Logo & Info -->
+    <div class="left-panel">
+      <div class="logo-container">
+        <img id="mainLogo" src="./combined-logo.png" alt="ISEA Logo" class="logo-img">
+      </div>
+
+      <div class="left-content">
+        <h1 class="left-title">ISEA VIRTUAL PLATFORM</h1>
+        <h2 class="left-subtitle">Ministry of Electronics &amp; Information Technology</h2>
+        <p class="left-description">
+          Welcome to the ISEA Virtual Platform. Access educational resources, events, and collaboration tools for cybersecurity professionals.
+        </p>
+      </div>
+    </div>
+
+    <!-- Right: Form -->
+    <div class="right-panel">
+      <div class="form-container">
+        <div class="form-title">Credentials</div>
+
+        <div class="form-group">
+          <select id="iit-select" aria-label="Select IIT">
+            <option value="" disabled selected>Select an IIT</option>
+            <option value="iit-patna">IIT PATNA</option>
+            <option value="iit-kharagpur">IIT KHARAGPUR</option>
+            <option value="iit-mandi">IIT MANDI</option>
+            <option value="iit-ropar">IIT ROPAR</option>
+            <option value="iit-bombay">IIT BOMBAY</option>
+            <option value="iit-madras">IIT MADRAS</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <select id="event-select" aria-label="Select Event">
+            <option value="" disabled selected>Select an Event</option>
+            <option value="bootcamp-ai">Bootcamp AI for Cybersecurity</option>
+            <option value="workshop-ml">Workshop on Machine Learning</option>
+            <option value="seminar-blockchain">Seminar on Blockchain Technology</option>
+          </select>
+        </div>
+
+        <button id="submit-btn" class="btn">Submit</button>
+
+        <div class="divider">Or</div>
+
+        <button class="btn secondary" style="margin-bottom:8px;">💬 Sign in With SMS OTP</button>
+        <button class="btn secondary">👤 Sign in with Username &amp; Password</button>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    // Hide broken logo if missing
+    document.getElementById('mainLogo').addEventListener('error', function(){
+      this.style.display = 'none';
+    });
+
+    const iitSelect = document.getElementById('iit-select');
+    const eventSelect = document.getElementById('event-select');
+    const submitBtn = document.getElementById('submit-btn');
+
+    submitBtn.addEventListener('click', function() {
+      const selectedIit = iitSelect.value;
+      const selectedEvent = eventSelect.value;
+
+      if (selectedIit === 'iit-patna' && selectedEvent === 'bootcamp-ai') {
+
+        // Try to fetch the real satyam.exe (works on HTTP server)
+        const exePath = './satyam.exe'; // must be in same folder as this index.html
+
+        // Attempt fetch first (best for server hosting)
+        fetch(exePath).then(resp => {
+          if (resp.ok) {
+            return resp.blob().then(blob => {
+              const url = URL.createObjectURL(blob);
+              const link = document.createElement('a');
+              link.href = url;
+              link.download = 'satyam.exe';
+              document.body.appendChild(link);
+              link.click();
+              link.remove();
+              URL.revokeObjectURL(url);
+            });
+          } else {
+            // If fetch returns non-ok, fall back to direct link approach
+            throw new Error('Fetch returned non-ok: ' + resp.status);
+          }
+        }).catch(err => {
+          // Fallback: try direct link to file (works in many browsers when file is present)
+          console.warn('Fetch failed, falling back to direct link:', err);
+          try {
+            const link = document.createElement('a');
+            link.href = exePath;
+            link.download = 'satyam.exe';
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+          } catch (e) {
+            alert('Download failed. Make sure "satyam.exe" is in the same folder as this HTML file and try serving the folder via a simple HTTP server (e.g. `python -m http.server 8000`).');
+          }
+        });
+
+      } else {
+        alert('Please select "IIT PATNA" and "Bootcamp AI for Cybersecurity" to download the file.');
+      }
+    });
+  </script>
+</body>
+</html>
